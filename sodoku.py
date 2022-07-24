@@ -58,7 +58,6 @@ class Sodoku:
     def _remove_random(self, board : list[list[str]], remove_num : int) -> None:
         '''
         Removes the given number of cells from the board at random. This can be improved
-        greatly
         '''
         while remove_num:
             rand_x, rand_y = random.randint(0,8), random.randint(0,8)
@@ -154,7 +153,7 @@ class Sodoku:
         return True
     
 
-    def _verify_placement(self,board, i, j, num):
+    def _verify_placement(self,board : list[list[int]], i : int, j : int, num : int):
         '''
         Verify that placement works. Using verify_board would be
         much more costly/ unneeded operations.
