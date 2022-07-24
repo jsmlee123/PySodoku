@@ -1,11 +1,15 @@
 import sys
 from typing import Union
-from copy import copy, deepcopy
+from copy import deepcopy
 import random
 from enum import Enum
 
 
 class Difficulty(Enum):
+    '''
+    Represents the different difficulties in sodoku and how many
+    cells must be empty
+    '''
     EASY = 45
     MEDIUM = 54
     HARD = 63
@@ -14,24 +18,25 @@ class Sodoku:
     '''
     Logic for sodoku
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         self._board = [['.' for x in range(9)] for y in range(9)]
         self._solution = None
         self.can_solve = False
     
-    def load_board(self, board : list[list[str]]):
+    def load_board(self, board : list[list[str]]) -> None:
         '''
-        Load in new board and its solution
+        Load in new custom board and its solution
         '''
         self._board = board
         self._solution = deepcopy(board)
         self.solve()
 
 
-    def generate_board(self, difficulty = Difficulty.EASY):
+    def generate_board(self, difficulty = Difficulty.EASY) -> None:
         '''
         Generate board from scratch. Create random valid board 
-        and remove numbers
+        and remove numbers and store solution. Shuffling strategy taken
+        from https://stackoverflow.com/questions/6924216/how-to-generate-sudoku-boards-with-unique-solutions
         '''
 
         board = [['.' for x in range(9)] for y in range(9)]
@@ -46,14 +51,15 @@ class Sodoku:
         self._shuffle_col_blocks(board)
 
         self._solution = deepcopy(board)
-        self._remove_random(board, difficulty)
+        self._remove_random(board, difficulty.value)
         self._board = board
         
 
-    def _remove_random(self, board, difficulty):
+    def _remove_random(self, board : list[list[str]], remove_num : int) -> None:
         '''
+        Removes the given number of cells from the board at random. This can be improved
+        greatly
         '''
-        remove_num = difficulty.value
         while remove_num:
             rand_x, rand_y = random.randint(0,8), random.randint(0,8)
             curr_val = board[rand_y][rand_x]
@@ -61,33 +67,40 @@ class Sodoku:
                 continue
             board[rand_y][rand_x] = '.'
             remove_num -= 1
-
+    
     @staticmethod
     def board_to_str(board):
+        '''
+        Simple method to give any given board as a readable str
+        '''
         res = ''
         for l in board:
             res += str(l) + '\n'
         return res
 
     
-    def _swap(self, board, i , j)-> None:
+    def _swap(self, board : list[list[int]], i : int , j : int)-> None:
         '''
+        Finds every instance of the numbers i and j on the board
+        and swaps them for the other
         '''
         for y in range(9):
             for x in range(9):
                 if board[x][y] == i: board[x][y] = j
                 if board[x][y] == j: board[x][y] = i
     
-    def _shuffle_row(self,board):
+    def _shuffle_row(self,board : list[list[int]]):
         '''
+        Shuffle the rows in the given board at random
         '''
         for i in range(9):
             ranNum = random.randint(0,2)
             j = (i // 3) * 3 + ranNum
             board[i], board[j] = board[j], board[i]
 
-    def _shuffle_col(self,board):
+    def _shuffle_col(self,board : list[list[int]]):
         '''
+        Shuffle the columns in the given board at random
         '''
         for i in range(9):
             ranNum = random.randint(0,2)
@@ -95,16 +108,18 @@ class Sodoku:
             for k in range(9):
                 board[k][i], board[k][j] = board[k][j], board[k][i]
     
-    def _shuffle_row_blocks(self,board):
+    def _shuffle_row_blocks(self,board : list[list[int]]):
         '''
+        Shuffle the groups of 3 rows in the given board at random
         '''
         for i in range(3):
             j = random.randint(0,2)
             for k in range(3):
                 board[i * 3 + k], board[j * 3 + k] = board[j * 3 + k], board[i * 3 + k]
     
-    def _shuffle_col_blocks(self,board):
+    def _shuffle_col_blocks(self,board : list[list[int]]):
         '''
+        Shuffle the groups of 3 columns in the given board at random
         '''
         for i in range(3):
             j = random.randint(0,2)
