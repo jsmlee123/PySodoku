@@ -1,31 +1,157 @@
 import sys
 from typing import Union
 from copy import copy, deepcopy
+import random
+from enum import Enum
 
-class sodoku:
+
+class Difficulty(Enum):
+    EASY = 45
+    MEDIUM = 54
+    HARD = 63
+
+class Sodoku:
     '''
     Logic for sodoku
     '''
     def __init__(self):
         self._board = [['.' for x in range(9)] for y in range(9)]
         self._solution = None
+        self.can_solve = False
     
     def load_board(self, board : list[list[str]]):
         '''
         Load in new board and its solution
         '''
         self._board = board
-        self._solution = self.solve_board()
+        self._solution = deepcopy(board)
+        self.solve()
 
 
-    def generate_board(self):
+    def generate_board(self, difficulty = Difficulty.EASY):
         '''
-        Generate board from scratch
+        Generate board from scratch. Create random valid board 
+        and remove numbers
         '''
-    def solve_board(self):
+
+        board = [['.' for x in range(9)] for y in range(9)]
+        self._solve_board(board) #solve this board to give us a basis
+
+        for i in range(9):
+            swap2 = random.randint(0,8)
+            self._swap(board, i, swap2)
+        self._shuffle_row(board)
+        self._shuffle_col(board)
+        self._shuffle_row_blocks(board)
+        self._shuffle_col_blocks(board)
+
+        self._solution = deepcopy(board)
+        self._remove_random(board, difficulty)
+        self._board = board
+        
+
+    def _remove_random(self, board, difficulty):
         '''
-        Solve board 
         '''
+        remove_num = difficulty.value
+        while remove_num:
+            rand_x, rand_y = random.randint(0,8), random.randint(0,8)
+            curr_val = board[rand_y][rand_x]
+            if curr_val == '.':
+                continue
+            board[rand_y][rand_x] = '.'
+            remove_num -= 1
+
+    @staticmethod
+    def board_to_str(board):
+        res = ''
+        for l in board:
+            res += str(l) + '\n'
+        return res
+
+    
+    def _swap(self, board, i , j)-> None:
+        '''
+        '''
+        for y in range(9):
+            for x in range(9):
+                if board[x][y] == i: board[x][y] = j
+                if board[x][y] == j: board[x][y] = i
+    
+    def _shuffle_row(self,board):
+        '''
+        '''
+        for i in range(9):
+            ranNum = random.randint(0,2)
+            j = (i // 3) * 3 + ranNum
+            board[i], board[j] = board[j], board[i]
+
+    def _shuffle_col(self,board):
+        '''
+        '''
+        for i in range(9):
+            ranNum = random.randint(0,2)
+            j = (i // 3) * 3 + ranNum
+            for k in range(9):
+                board[k][i], board[k][j] = board[k][j], board[k][i]
+    
+    def _shuffle_row_blocks(self,board):
+        '''
+        '''
+        for i in range(3):
+            j = random.randint(0,2)
+            for k in range(3):
+                board[i * 3 + k], board[j * 3 + k] = board[j * 3 + k], board[i * 3 + k]
+    
+    def _shuffle_col_blocks(self,board):
+        '''
+        '''
+        for i in range(3):
+            j = random.randint(0,2)
+            for k in range(3):
+                for z in range(9):
+                    board[i * 3 + k][z], board[j * 3 + k][z] = board[j * 3 + k][z], board[i * 3 + k][z]
+
+    def solve(self) -> None:
+        '''
+        Generate the solution board from the current board
+        '''
+        board = deepcopy(self._board)
+        self.can_solve = self._solve_board(board)
+        if self.can_solve: 
+            self._solution = board
+
+    def _solve_board(self, board) -> bool:
+        '''
+        Solve board. Return False if cannot solve, True if can solve
+        '''
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == '.':
+                    for num in "123456789":
+                        if self._verify_placement(board, i, j, num):
+                            board[i][j] = num
+                            if self._solve_board(board):
+                                return True
+                            else:
+                                board[i][j] = '.'
+                    return False
+        return True
+    
+
+    def _verify_placement(self,board, i, j, num):
+        '''
+        Verify that placement works. Using verify_board would be
+        much more costly/ unneeded operations.
+        '''
+        for y in range(9):
+            if board[y][j] == num:
+                return False
+            if board[i][y] == num:
+                return False
+            if board[3 * (i // 3) + y // 3][3 * (j // 3) + y % 3] == num:
+                return False
+        return True
 
     def verify_board(self) -> bool:
         '''
@@ -93,4 +219,3 @@ class sodoku:
         return True
 
     
-        
