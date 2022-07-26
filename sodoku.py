@@ -21,7 +21,7 @@ class Sodoku:
     def __init__(self) -> None:
         self._board = [['' for x in range(9)] for y in range(9)]
         self._solution = None
-        self.can_solve = False
+        self._static = [['' for x in range(9)] for y in range(9)]
     
     def load_board(self, board : list[list[str]]) -> None:
         '''
@@ -53,6 +53,7 @@ class Sodoku:
         self._solution = deepcopy(board)
         self._remove_random(board, difficulty.value)
         self._board = board
+        self._static = deepcopy(board)
         
 
     def _remove_random(self, board : list[list[str]], remove_num : int) -> None:
@@ -172,6 +173,16 @@ class Sodoku:
         Verify Board is correct
         '''
         return self._valid_groups() and self._valid_row() and self._valid_column()
+    def is_solved(self) -> bool:
+        '''
+        Verify Board is solved
+        '''
+        for i in range(9):
+            for j in range(9):
+                if self._board[i][j] == '':
+                    return False
+        return self.verify_board()
+
     def get_board(self) -> list[list[str]]:
         '''
         Return copy of board
@@ -184,11 +195,17 @@ class Sodoku:
         '''
         return deepcopy(self._solution)
 
-    def set_val(self, x : int, y : int, val : str):
+    def set_val(self, x : int, y : int, val : str) -> bool:
         '''
         Set cell in board
         '''
-        self._board[x][y] = val
+        if val in ['1','2','3','4','5','6','7','8','9',''] and self._static[x][y] == '' :
+            self._board[x][y] = val
+            return True
+        return False
+    
+    def set_solved(self):
+        self._board = deepcopy(self._solution)
 
     def delete_val(self,x,y):
         '''

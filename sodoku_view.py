@@ -1,10 +1,15 @@
 import collections
-import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 class SodokuView(QWidget):
+    update = pyqtSignal()
+    gen = pyqtSignal()
+    reveal = pyqtSignal()
+    check = pyqtSignal()
+    help = pyqtSignal()
+
     def __init__(self):
         
         super(SodokuView, self).__init__()
@@ -41,27 +46,41 @@ class SodokuView(QWidget):
         self.init_sodoku()
         
         #Generate New Board
-        generate = QPushButton('Generate New', self)
-        generate.move(100, 500)
+        self.generate = QPushButton('Generate New', self)
+        self.generate.clicked.connect(self.gen)
+        self.generate.move(100, 500)
 
         #Get Hint - Maybe Do Later
-        hint = QPushButton('Show Hint', self)
-        hint.move(100, 300)
+        self.hint = QPushButton('Show Hint', self)
+        self.hint.clicked.connect(self.help)
+        self.hint.move(100, 300)
 
         #Check Solution is correct
-        verify = QPushButton('Check Solution', self)
-        verify.move(825, 300)
+        self.verify = QPushButton('Check Solution', self)
+        self.verify.clicked.connect(self.check)
+        self.verify.move(825, 300)
 
         #Show Solution
         #Check Solution is correct
-        solution = QPushButton('Reveal Solution', self)
-        solution.move(825, 500)
+        self.solution = QPushButton('Reveal Solution', self)
+        self.solution.clicked.connect(self.reveal)
+        self.solution.move(825, 500)
+
+        #Label which tells if solution is solved
+        self.is_solved = QLabel('Hello', self)
+        self.is_solved.resize(500,100)
+        self.is_solved.move(500, 700)
 
         self.show()
 
     def set_curr_board(self, board):
         self._curr_board = board
-    
+
+    def display(self):
+        for i in range(9):
+            for j in range(9):
+                self._cells[(i,j)].setText(self._curr_board[i][j])
+
     def update_board(self):
         for i in range(9):
             for j in range(9):
@@ -77,17 +96,10 @@ class SodokuView(QWidget):
             for j in range(9):
                 temp = QLineEdit(self)
                 temp.setText(self._curr_board[i][j])
+                temp.setAlignment(Qt.AlignCenter)
+                temp.setFont(QFont('Arial', 20))
                 temp.resize(50,50)
                 temp.move(i * 50 + 285, j * 50 + 200)
-                temp.textChanged.connect(lambda: self.update_board())
+                temp.textEdited.connect(lambda: self.update_board())
+                temp.textEdited.connect(self.update)
                 self._cells[(i,j)] = temp
-
-
-def window():
-   app = QApplication(sys.argv)
-   view = SodokuView()
-   app.exec()
-   
-
-if __name__ == '__main__':
-   window()
