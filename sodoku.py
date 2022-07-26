@@ -19,7 +19,7 @@ class Sodoku:
     Logic for sodoku
     '''
     def __init__(self) -> None:
-        self._board = [['.' for x in range(9)] for y in range(9)]
+        self._board = [['' for x in range(9)] for y in range(9)]
         self._solution = None
         self.can_solve = False
     
@@ -39,7 +39,7 @@ class Sodoku:
         from https://stackoverflow.com/questions/6924216/how-to-generate-sudoku-boards-with-unique-solutions
         '''
 
-        board = [['.' for x in range(9)] for y in range(9)]
+        board = [['' for x in range(9)] for y in range(9)]
         self._solve_board(board) #solve this board to give us a basis
 
         for i in range(9):
@@ -62,9 +62,9 @@ class Sodoku:
         while remove_num:
             rand_x, rand_y = random.randint(0,8), random.randint(0,8)
             curr_val = board[rand_y][rand_x]
-            if curr_val == '.':
+            if curr_val == '':
                 continue
-            board[rand_y][rand_x] = '.'
+            board[rand_y][rand_x] = ''
             remove_num -= 1
     
     @staticmethod
@@ -141,14 +141,14 @@ class Sodoku:
         '''
         for i in range(len(board)):
             for j in range(len(board[0])):
-                if board[i][j] == '.':
+                if board[i][j] == '':
                     for num in "123456789":
                         if self._verify_placement(board, i, j, num):
                             board[i][j] = num
                             if self._solve_board(board):
                                 return True
                             else:
-                                board[i][j] = '.'
+                                board[i][j] = ''
                     return False
         return True
     
@@ -194,13 +194,13 @@ class Sodoku:
         '''
         Delete cell in board
         '''
-        self._board[x][y] = '.'
+        self._board[x][y] = ''
 
     def _valid(self,group : Union[list,tuple]) -> bool:
         '''
         Verify unique numbers in group
         '''
-        unit = [cell for cell in group if cell != '.']
+        unit = [cell for cell in group if cell != '']
         return len(set(unit)) == len(unit)
 
     def _valid_row(self) -> bool:
