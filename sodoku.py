@@ -173,15 +173,20 @@ class Sodoku:
         Verify Board is correct
         '''
         return self._valid_groups() and self._valid_row() and self._valid_column()
-    def is_solved(self) -> bool:
-        '''
-        Verify Board is solved
-        '''
+
+    def full_board(self) -> bool:
         for i in range(9):
             for j in range(9):
                 if self._board[i][j] == '':
                     return False
-        return self.verify_board()
+        return True
+        
+
+    def is_solved(self) -> bool:
+        '''
+        Verify Board is solved
+        '''
+        return self.full_board and self.verify_board()
 
     def get_board(self) -> list[list[str]]:
         '''
@@ -206,6 +211,15 @@ class Sodoku:
     
     def set_solved(self):
         self._board = deepcopy(self._solution)
+    def get_hint(self):
+        if self.full_board():
+            return
+        while True:
+            x,y = random.randint(0,8), random.randint(0,8)
+            if self._board[x][y] == '':
+                self._board[x][y] = self._solution[x][y]
+                return
+
 
     def delete_val(self,x,y):
         '''

@@ -11,7 +11,6 @@ class SodokuView(QWidget):
     help = pyqtSignal()
 
     def __init__(self):
-        
         super(SodokuView, self).__init__()
         self._curr_board = [['' for x in range(9)] for y in range(9)]
         self._static = []
@@ -67,9 +66,11 @@ class SodokuView(QWidget):
         self.solution.move(825, 500)
 
         #Label which tells if solution is solved
-        self.is_solved = QLabel('Hello', self)
+        self.is_solved = QLabel('', self)
+        self.is_solved.setAlignment(Qt.AlignCenter)
+        self.is_solved.setFont(QFont('Arial', 30))
         self.is_solved.resize(500,100)
-        self.is_solved.move(500, 700)
+        self.is_solved.move(260, 650)
 
         self.show()
 

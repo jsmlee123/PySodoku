@@ -10,7 +10,7 @@ from sodoku_view import SodokuView
 
 class SodokuController:
     '''
-    Controller to interact between view and model
+    Controller to interact between sodoku view and model
     '''
     def __init__(self):
         self._app = QApplication(sys.argv)
@@ -23,6 +23,12 @@ class SodokuController:
         self._view.gen.connect(lambda : self.generate_model())
         self._view.reveal.connect(lambda : self.show_solution())
         self._view.check.connect(lambda : self.verify_solution())
+        self._view.help.connect(lambda : self.get_hint())
+
+    def get_hint(self):
+        self._model.get_hint()
+        self.update_view()
+        self._view.display()
     
     def verify_solution(self):
         '''
@@ -63,8 +69,6 @@ class SodokuController:
                 view_cell = self._view._curr_board[i][j]
                 if model_cell != view_cell:
                     if self._model.set_val(i,j,view_cell) :
-                        #print(Sodoku.board_to_str(self._model._board))
-                        #print(Sodoku.board_to_str(self._view._curr_board))
                         return
                     else:
                         self.update_view()
