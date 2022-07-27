@@ -3,6 +3,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from Model.sodoku import Difficulty
+
 class SodokuView(QWidget):
     update = pyqtSignal()
     gen = pyqtSignal()
@@ -13,10 +15,10 @@ class SodokuView(QWidget):
     def __init__(self):
         super(SodokuView, self).__init__()
         self._curr_board = [['' for x in range(9)] for y in range(9)]
-        self._static = []
-        self._sol_board = None
         self._cells = collections.defaultdict(QLineEdit)
+        self.difficulty = Difficulty.MEDIUM
         self._initUI()
+        
 
     def _initUI(self):
         '''
@@ -30,7 +32,7 @@ class SodokuView(QWidget):
         '''
         #Add background image
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setStyleSheet('QWidget {background-image: url(sodoku.jpg);}')
+        self.setStyleSheet('QWidget {background-image: url(View//sodoku.jpg);}')
 
         #verify_placement = pyqtSignal()
         self.resize(1000,800)
@@ -39,6 +41,13 @@ class SodokuView(QWidget):
         title = QLabel("PySodoku", self)
         title.setFont(QFont('Times', 40))
         title.move(365,50)
+
+        self.combobox1 = QComboBox(self)
+        self.combobox1.resize(100,30)
+        self.combobox1.move(100,540)
+        self.combobox1.addItem('Easy')
+        self.combobox1.addItem('Medium')
+        self.combobox1.addItem('Hard')
 
         #board
         self.board = []

@@ -20,8 +20,9 @@ class Sodoku:
     '''
     def __init__(self) -> None:
         self._board = [['' for x in range(9)] for y in range(9)]
-        self._solution = None
+        self._solution = [['' for x in range(9)] for y in range(9)]
         self._static = [['' for x in range(9)] for y in range(9)]
+        self.difficulty = Difficulty.MEDIUM
     
     def load_board(self, board : list[list[str]]) -> None:
         '''
@@ -186,7 +187,7 @@ class Sodoku:
         '''
         Verify Board is solved
         '''
-        return self.full_board and self.verify_board()
+        return self.full_board() and self.verify_board()
 
     def get_board(self) -> list[list[str]]:
         '''

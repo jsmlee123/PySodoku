@@ -1,7 +1,7 @@
 from re import S
 import sys
 
-from sodoku import Difficulty, Sodoku
+from Model.sodoku import Difficulty, Sodoku
 
 def test_valid_row():
     board1 = Sodoku()
@@ -29,9 +29,6 @@ def test_valid_row():
     board1.load_board(solve1)
     assert board1._solve_board(solve1) == True
     board1.generate_board(Difficulty.MEDIUM)
-    print(Sodoku.board_to_str(board1._board))
-    print(Sodoku.board_to_str(board1._solution))
-    #print(board1._solution)
     print("Verify Tests Passed")
 
 

@@ -1,12 +1,10 @@
-import collections
-from copy import deepcopy
 import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from sodoku import Sodoku
 
-from sodoku_view import SodokuView
+from Model.sodoku import Sodoku
+from View.sodoku_view import SodokuView
 
 class SodokuController:
     '''
@@ -48,7 +46,7 @@ class SodokuController:
     def generate_model(self):
         '''
         '''
-        self._model.generate_board()
+        self._model.generate_board(self._view.difficulty)
         self.update_view()
         self._view.display()
         self._view.is_solved.setText("")
